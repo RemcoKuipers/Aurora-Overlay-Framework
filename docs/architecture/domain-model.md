@@ -154,3 +154,86 @@ Aurora 1.0 supports:
 - Alert
 
 Future widget types can be added without changing the core architecture.
+
+# Theme
+
+A Theme defines the visual identity of an Aurora Project.
+
+Every project contains exactly one active theme.
+
+Themes provide a consistent appearance across all widgets within a project.
+
+## Responsibilities
+
+A Theme defines:
+
+- Colors
+- Typography
+- Shapes
+- Borders
+- Shadows
+- Transparency
+- Background styles
+- Gradients
+- Animation styles
+
+A Theme may reference project assets such as images or icons but does not own them.
+
+## Built-in Themes (MVP)
+
+Aurora ships with four built-in themes:
+
+- Aurora Default
+- Dark
+- Light
+- Christmas
+
+These themes demonstrate the capabilities of the framework while allowing users to create and customize their own themes.
+
+# Asset
+
+An Asset is an external resource that can be referenced by widgets and themes within an Aurora Project.
+
+Assets are stored once per project and can be reused multiple times.
+
+## Relationships
+
+Asset
+◄──────── Widget
+◄──────── Theme
+
+## Supported Asset Types
+
+Aurora 1.0 supports:
+
+- Images
+- Icons
+- Fonts
+- Audio
+- Video
+
+Assets are shared resources and are never duplicated within a project.
+
+# Export Profile
+
+An Export Profile defines how an Aurora Project is exported for a specific streaming platform.
+
+Each Export Profile contains the settings required to generate production-ready output.
+
+## Core Properties
+
+Every Export Profile contains:
+
+- Name
+- Target Platform
+- Output Format
+- Export Settings
+
+## MVP Target Platforms
+
+Aurora 1.0 supports:
+
+- OBS Browser Source
+- Mix It Up
+
+The architecture allows additional export targets to be added in future releases.
