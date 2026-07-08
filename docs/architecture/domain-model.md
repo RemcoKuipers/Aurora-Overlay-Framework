@@ -99,3 +99,58 @@ A Widget Instance references a Widget and stores scene-specific information such
 - Opacity
 
 This allows the same Widget to be reused across multiple scenes while maintaining independent placement and appearance.
+
+---
+
+# Widget
+
+A Widget is a reusable building block that provides a single piece of functionality within an Aurora Project.
+
+Widgets are created at project level and can be reused across multiple scenes.
+
+Widgets define **what** they are and **how** they behave.
+
+They do not define where they are placed inside a scene.
+
+## Relationships
+
+Widget
+└── 0..* Widget Instances
+
+### Widget Instances
+
+A Widget can be reused in multiple scenes through Widget Instances.
+
+Each Widget Instance stores scene-specific properties such as:
+
+- Position
+- Size
+- Layer
+- Visibility
+- Opacity
+
+## Core Properties
+
+Every Widget contains:
+
+- Id
+- Name
+- Type
+- Configuration
+- Data Source (optional)
+
+## Supported MVP Widget Types
+
+Aurora 1.0 supports:
+
+- Text
+- Image
+- Camera Frame
+- Goal Bar
+- Chat Box
+- Latest Follower
+- Latest Subscriber
+- Latest Donation
+- Alert
+
+Future widget types can be added without changing the core architecture.
