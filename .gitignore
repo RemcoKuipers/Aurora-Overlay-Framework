@@ -1,3 +1,21 @@
+# IDE
+.idea
+.vscode
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Archives
+*.zip
+*.rar
+*.7z
+
+# Temporary files
+tmp/
+temp/
+
 # Logs
 logs
 *.log
