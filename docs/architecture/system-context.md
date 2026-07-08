@@ -2,15 +2,38 @@
 
 ## Purpose
 
-This document describes Aurora's relationship with users and external systems.
+This document describes Aurora's relationship with its users and external systems.
+
+It defines the system boundary and shows how Aurora interacts with the streaming ecosystem.
+
+---
+
+# System Boundary
+
+Aurora is the central workspace for creating, managing and exporting streaming overlays.
+
+Aurora does **not** replace OBS Studio or Mix It Up.
+
+Instead, Aurora simplifies the creation of overlays that integrate seamlessly with both platforms.
 
 ---
 
 # Primary Actor
 
-Streamer
+## Streamer
 
-Aurora is designed primarily for streamers who want to create professional overlays without writing code.
+The streamer creates and manages overlay projects using Aurora.
+
+Typical activities include:
+
+- Creating projects
+- Creating scenes
+- Configuring widgets
+- Applying themes
+- Previewing overlays
+- Exporting overlays
+
+Aurora should remove as much technical complexity as possible.
 
 ---
 
@@ -18,58 +41,119 @@ Aurora is designed primarily for streamers who want to create professional overl
 
 ## OBS Studio
 
-Displays exported Browser Sources.
+Aurora exports Browser Source compatible overlays.
 
-Aurora generates compatible output but does not control OBS.
+OBS is responsible for displaying the generated overlays.
+
+Aurora never controls OBS directly.
 
 ---
 
 ## Mix It Up
 
-Provides interactive events and variables.
+Mix It Up provides events, variables and stream interactions.
 
-Aurora exports overlays compatible with Mix It Up.
+Aurora exports overlays that respond to these events.
 
----
-
-## Community
-
-Contributes themes, widgets and plugins.
+Aurora does not replace Mix It Up.
 
 ---
 
 ## Local File System
 
-Stores Aurora projects and exported overlays.
+Stores:
+
+- Aurora Projects
+- Assets
+- Exported overlays
+- Themes
 
 ---
 
-# System Boundary
+## Community
 
-Aurora acts as the central workspace between streamers and streaming software.
+The Aurora community contributes:
 
-Aurora does not replace OBS or Mix It Up.
-
-Instead, it simplifies the process of creating overlays that work with both platforms.
+- Themes
+- Widgets
+- Plugins
+- Templates
 
 ---
 
 # Context Diagram
 
-(Streamer)
+                         Community
+                  Themes • Widgets • Plugins
+                              │
+                              │
+                              ▼
+                    +------------------+
+                    |      Aurora      |
+                    |  Visual Workspace|
+                    +------------------+
+                      ▲      ▲      ▲
+                      │      │      │
+                      │      │      │
+                Streamer    OBS   Mix It Up
+                      │
+                      ▼
+                 Live Stream
 
-↓
+---
 
-Aurora
+# Responsibilities
 
-↓
+Aurora is responsible for:
 
-OBS Studio
+- Managing overlay projects
+- Managing scenes
+- Managing widgets
+- Managing themes
+- Live preview
+- Exporting production-ready overlays
 
-↓
+Aurora is NOT responsible for:
 
-Live Stream
+- Streaming
+- Scene switching
+- Chat bot functionality
+- Broadcasting
+- Video encoding
 
-Mix It Up ↔ Aurora
+---
 
-Community ↔ Aurora
+# Design Principles
+
+Aurora always acts as the bridge between creators and streaming software.
+
+Users interact with Aurora.
+
+Aurora interacts with exported files.
+
+OBS and Mix It Up remain independent systems.
+
+---
+
+# Architectural Decisions
+
+Aurora follows these principles:
+
+- Streamer First
+- Visual First
+- Everything is a Project
+- Users think in Scenes
+- Loose Coupling
+- Separation of Concerns
+
+---
+
+# Future Considerations
+
+The architecture should support:
+
+- Plugin Marketplace
+- Theme Marketplace
+- Cloud Synchronization
+- Community Widgets
+- Team Collaboration
