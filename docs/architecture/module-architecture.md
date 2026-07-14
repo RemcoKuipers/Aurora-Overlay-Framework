@@ -454,3 +454,231 @@ Assets are passive resources.
 
 The Asset Library owns the lifecycle of assets, while other modules consume them through stable references rather than
 direct ownership.
+
+### Export Engine
+
+#### Purpose
+
+The Export Engine is responsible for transforming Aurora projects into distributable output formats.
+
+It provides a standardized export pipeline that ensures every export follows the same validation and transformation
+process while allowing different output formats to implement their own final export stage.
+
+#### Responsibilities
+
+The Export Engine is responsible for:
+
+- Validating export requests.
+- Transforming project data.
+- Preparing export packages.
+- Executing format-specific exporters.
+- Reporting export results.
+- Providing a consistent export workflow.
+
+#### Out of Scope
+
+The Export Engine is **not** responsible for:
+
+- Managing projects.
+- Managing widgets.
+- Applying themes.
+- Rendering the editor.
+
+These responsibilities belong to their dedicated modules.
+
+#### Dependencies
+
+The Export Engine communicates through the Core and remains independent from project-specific implementations.
+
+#### Public API
+
+The Export Engine exposes services for:
+
+- Export validation
+- Export execution
+- Export status
+- Export formats
+- Export reporting
+
+#### Future Extensions
+
+Future versions of the Export Engine may provide:
+
+- Custom exporters
+- Batch exports
+- Export profiles
+- Cloud publishing
+- Scheduled exports
+
+#### Design Principle
+
+Every export follows the same export pipeline.
+
+Format-specific exporters are only responsible for generating their own output while relying on the shared pipeline for
+validation, transformation and packaging.
+
+### Shared
+
+#### Purpose
+
+The Shared module provides reusable building blocks that are used across multiple modules within Aurora Overlay
+Framework.
+
+It contains generic resources that promote consistency and reduce duplication while remaining independent from
+feature-specific implementations.
+
+#### Responsibilities
+
+The Shared module is responsible for:
+
+- Providing shared types.
+- Providing reusable interfaces.
+- Providing utility functions.
+- Providing shared constants.
+- Providing common icons and assets.
+- Providing design token definitions.
+
+#### Out of Scope
+
+The Shared module is **not** responsible for:
+
+- Business logic.
+- Project management.
+- Widget management.
+- Theme management.
+- Export functionality.
+
+Feature-specific logic must remain within its own module.
+
+#### Dependencies
+
+The Shared module should remain independent of all feature modules.
+
+Feature modules may depend on Shared, but Shared must never depend on them.
+
+#### Public API
+
+The Shared module exposes reusable resources including:
+
+- Shared types
+- Interfaces
+- Constants
+- Utility functions
+- Design token definitions
+
+#### Future Extensions
+
+Future versions of the Shared module may provide:
+
+- Shared validation helpers
+- Localization resources
+- Common animations
+- Accessibility utilities
+
+#### Design Principle
+
+The Shared module exists to eliminate duplication, not to centralize unrelated functionality.
+
+Only resources that are generic, reusable and feature-independent belong in the Shared module.
+
+## Module Dependencies
+
+Aurora Overlay Framework follows a strict dependency model to maintain low coupling and high modularity.
+
+Feature modules do not communicate directly with one another. Instead, all module interactions are coordinated through
+the Core.
+
+The Shared module provides reusable resources that may be consumed by other modules, but it remains completely
+independent of feature-specific functionality.
+
+### Dependency Matrix
+
+| Module            | Core | Shared | Feature Modules |
+|-------------------|:----:|:------:|:---------------:|
+| Core              |  —   |   ✅    |        ❌        |
+| Designer UI       |  ✅   |   ✅    |        ❌        |
+| Widget Engine     |  ✅   |   ✅    |        ❌        |
+| Theme Engine      |  ✅   |   ✅    |        ❌        |
+| Project Workspace |  ✅   |   ✅    |        ❌        |
+| Asset Library     |  ✅   |   ✅    |        ❌        |
+| Export Engine     |  ✅   |   ✅    |        ❌        |
+| Shared            |  ❌   |   —    |        ❌        |
+
+### Dependency Rules
+
+The following architectural rules apply throughout the project:
+
+- Dependencies should always point toward more generic modules, never toward more specialized modules.
+- The Core coordinates communication between feature modules.
+- Feature modules must never depend directly on other feature modules.
+- Shared provides reusable resources but never contains feature-specific logic.
+- Shared must never depend on any other module.
+- The Core may depend on Shared.
+- Circular dependencies are not permitted.
+
+## Design Rationale
+
+Aurora Overlay Framework has been designed around a modular architecture that prioritizes maintainability, extensibility
+and developer experience.
+
+Rather than optimizing for rapid feature development, the architecture establishes a strong foundation that allows the
+framework to evolve without requiring major structural changes.
+
+The following design decisions form the basis of the architecture.
+
+### Central Core
+
+A central Core module acts as the orchestration layer of the application.
+
+Instead of allowing feature modules to communicate directly, the Core coordinates interactions between modules. This
+reduces coupling, simplifies maintenance and provides a single point for application-wide coordination.
+
+### Specialized Modules
+
+Each module has a single, clearly defined responsibility.
+
+Modules focus on one area of functionality, allowing them to evolve independently while reducing implementation
+complexity.
+
+### Design Tokens
+
+Visual styling is centralized within the Theme Engine through design tokens.
+
+Widgets never define their own visual appearance directly. Instead, they consume design tokens, allowing themes to
+change the entire visual identity of a project without modifying individual widgets.
+
+### Project Workspace
+
+The editing session is managed separately from the user interface.
+
+Keeping editor state independent from presentation enables future features such as autosave, workspace recovery and
+undo/redo while maintaining a clean separation of concerns.
+
+### Export Pipeline
+
+All exports follow the same standardized export pipeline.
+
+Validation, transformation and packaging are shared across every export format, while format-specific exporters remain
+responsible only for generating their own output.
+
+### Shared Resources
+
+Reusable resources are centralized within the Shared module.
+
+Only generic, feature-independent resources belong in Shared. This reduces duplication while preventing feature-specific
+logic from spreading throughout the application.
+
+### Long-Term Maintainability
+
+The architecture is designed to support long-term growth.
+
+Future capabilities such as plugins, additional exporters, new widgets and custom themes can be introduced through
+existing extension points without requiring fundamental architectural changes.
+
+### Architectural Philosophy
+
+Aurora Overlay Framework is designed around the principle that complexity should be handled by the framework, not by the
+streamer.
+
+The architecture favors clear responsibilities, modular design and predictable extension points so that both developers
+and end users can work efficiently as the project continues to grow.
