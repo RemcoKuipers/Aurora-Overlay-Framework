@@ -206,3 +206,89 @@ Zod supports these architectural requirements by providing:
 - Clear and consistent validation rules.
 - Improved application reliability by preventing invalid data from entering the system.
 
+## Vitest
+
+### Purpose
+
+Vitest is the unit testing framework used by Aurora Overlay Framework.
+
+It verifies the correctness of individual functions, components, and modules throughout the application.
+
+### Why Vitest
+
+Aurora consists of multiple independent modules that are expected to evolve over time. Automated unit testing helps
+ensure that new changes do not introduce regressions and that individual components continue to behave as expected.
+
+Vitest supports these goals by providing:
+
+- Fast test execution.
+- Excellent integration with Vite.
+- Built-in TypeScript support.
+- A familiar testing API.
+- Reliable automated verification of application logic.
+
+## Playwright
+
+### Purpose
+
+Playwright is the end-to-end testing framework used by Aurora Overlay Framework.
+
+It validates complete user workflows by simulating real user interactions within the application.
+
+### Why Playwright
+
+Aurora provides an interactive user interface where multiple components work together. Features such as project
+creation, scene editing, widget configuration, theme customization, and project export involve complete user workflows
+that cannot be fully verified through unit tests alone.
+
+Playwright supports these architectural requirements by providing:
+
+- Automated end-to-end testing across the application.
+- Reliable browser automation.
+- Verification of complete user workflows.
+- Cross-browser testing capabilities.
+- Early detection of integration issues.
+
+## ESLint
+
+### Purpose
+
+ESLint is the static code analysis tool used by Aurora Overlay Framework.
+
+It helps enforce coding standards and detects potential issues before the application is built or deployed.
+
+### Why ESLint
+
+Aurora is designed as a long-term, maintainable project with a modular architecture. Consistent coding standards improve
+readability, reduce defects, and make collaboration easier as the codebase grows.
+
+ESLint supports these goals by providing:
+
+- Automated detection of common programming errors.
+- Consistent coding standards across the project.
+- Early identification of potential issues.
+- Improved code readability and maintainability.
+- Excellent integration with TypeScript and React.
+
+## Prettier
+
+### Purpose
+
+Prettier is the code formatting tool used by Aurora Overlay Framework.
+
+It automatically formats source code according to a consistent set of styling rules.
+
+### Why Prettier
+
+Aurora is intended to remain maintainable as the project grows and potentially accepts contributions from multiple
+developers. Consistent code formatting improves readability, reduces unnecessary differences in version control, and
+allows developers to focus on functionality rather than formatting.
+
+Prettier supports these goals by providing:
+
+- Automatic and consistent code formatting.
+- Improved readability across the codebase.
+- Reduced formatting-related merge conflicts.
+- Better collaboration between contributors.
+- Seamless integration with ESLint and modern development tools.
+
