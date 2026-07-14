@@ -292,3 +292,71 @@ Prettier supports these goals by providing:
 - Better collaboration between contributors.
 - Seamless integration with ESLint and modern development tools.
 
+## npm
+
+### Purpose
+
+npm is the package manager used by Aurora Overlay Framework.
+
+It manages project dependencies, development tools, and build scripts required to develop, test, and maintain the
+application.
+
+### Why npm
+
+Aurora relies on a modern frontend ecosystem consisting of numerous third-party libraries and development tools.
+Managing these dependencies consistently is essential for reproducible builds and efficient collaboration.
+
+npm supports these goals by providing:
+
+- Centralized dependency management.
+- Reproducible project installations.
+- Standardized project scripts.
+- Access to a large ecosystem of open-source packages.
+- Seamless integration with the modern JavaScript and TypeScript ecosystem.
+
+## Git & GitHub
+
+### Purpose
+
+Git is the version control system used by Aurora Overlay Framework, while GitHub serves as the central platform for
+source code hosting, collaboration, and project management.
+
+Together, they provide a structured and traceable development workflow throughout the project lifecycle.
+
+### Why Git & GitHub
+
+Aurora is developed using a structured workflow that emphasizes incremental development, documentation, and
+maintainability. Version control is essential for tracking architectural decisions, managing feature development, and
+maintaining a reliable project history.
+
+Git and GitHub support these goals by providing:
+
+- Distributed version control.
+- Traceable commit history.
+- Branch-based development workflows.
+- Pull requests and code review support.
+- Secure cloud-based repository hosting.
+- Integrated project documentation and issue tracking.
+
+## GitHub Actions
+
+### Purpose
+
+GitHub Actions is the continuous integration (CI) platform used by Aurora Overlay Framework.
+
+It automates quality assurance tasks such as building, testing, and validating the project whenever changes are pushed
+to the repository.
+
+### Why GitHub Actions
+
+Aurora follows a structured development workflow where code quality and maintainability are essential. Automating
+repetitive development tasks helps ensure that every change is validated consistently before becoming part of the
+project's history.
+
+GitHub Actions supports these goals by providing:
+
+- Automated build verification.
+- Automated test execution.
+- Consistent quality checks.
+- Integration with GitHub pull requests.
+- A scalable foundation for future deployment pipelines.
