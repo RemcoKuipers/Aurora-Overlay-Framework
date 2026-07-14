@@ -1,0 +1,28 @@
+:root {
+    --header-height: 56px;
+    --statusbar-height: 28px;
+
+    --sidebar-width: 260px;
+    --properties-width: 320px;
+}
+.editor-shell {
+    display: grid;
+
+    grid-template-columns:
+    var(--sidebar-width)
+    1fr
+    var(--properties-width);
+
+    grid-template-rows:
+    var(--header-height)
+    1fr
+    var(--statusbar-height);
+
+    grid-template-areas:
+    "header header header"
+    "sidebar canvas properties"
+    "status status status";
+
+    height: 100vh;
+}
+

@@ -1,0 +1,6 @@
+.properties-panel {
+    grid-area: properties;
+
+    border-left: 1px solid #444;
+    padding: 16px;
+}
