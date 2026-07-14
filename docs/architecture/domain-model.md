@@ -4,7 +4,8 @@
 
 This document defines the core domain objects of Aurora and the relationships between them.
 
-The domain model describes the business concepts of Aurora and is independent of implementation details such as TypeScript classes or database tables.
+The domain model describes the business concepts of Aurora and is independent of implementation details such as
+TypeScript classes or database tables.
 
 ---
 
@@ -26,7 +27,8 @@ Aurora consists of the following core domain objects:
 
 The Project is the root object of Aurora.
 
-Every Aurora project represents a complete overlay workspace and contains all resources required to create and export overlays.
+Every Aurora project represents a complete overlay workspace and contains all resources required to create and export
+overlays.
 
 ## Relationships
 
@@ -188,7 +190,8 @@ Aurora ships with four built-in themes:
 - Light
 - Christmas
 
-These themes demonstrate the capabilities of the framework while allowing users to create and customize their own themes.
+These themes demonstrate the capabilities of the framework while allowing users to create and customize their own
+themes.
 
 # Asset
 

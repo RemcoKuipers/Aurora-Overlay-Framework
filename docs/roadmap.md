@@ -1,34 +1,28 @@
-# Aurora Roadmap
+Roadmap
 
-## Sprint 0 ✅
+Version 1.0
+✅ Core editor
+✅ Scene management
+✅ Widget system
+✅ Theme system
+✅ Export to HTML
+✅ Export to Mix It Up
 
-Repository
+Version 1.1
+□ Widget presets
+□ Undo/Redo
+□ Autosave
+□ Additional widgets
 
-Documentation
+Version 2.0
+□ Plugin API
+□ Community plugins
+□ Custom exporters
 
-Vision
-
-## Sprint 1 ✅
-
-Architecture
-
-- [x] Overview
-- [x] System Context
-- [x] Project
-- [x] Scene
-- [x] Widget
-- [x] Theme
-- [x] Asset
-- [x] Export Profile
-
-## Sprint 2
-
-Module Architecture
-
-## Sprint 3
-
-Project Structure
-
-## Sprint 4
-
-TypeScript Bootstrap
+Future ideas
+□ Streamer.bot integration
+□ SAMMI integration
+□ OBS WebSocket support
+□ Cloud sync
+□ Asset marketplace
+□ AI-assisted layout suggestions

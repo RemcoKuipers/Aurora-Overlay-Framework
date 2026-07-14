@@ -8,7 +8,8 @@
 
 # Mission
 
-Aurora empowers streamers to create professional overlays through an intuitive visual workspace, eliminating technical barriers so they can focus on creating content instead of configuring software.
+Aurora empowers streamers to create professional overlays through an intuitive visual workspace, eliminating technical
+barriers so they can focus on creating content instead of configuring software.
 
 ---
 
