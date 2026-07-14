@@ -1,104 +1,75 @@
-# Aurora Overlay Framework
+# React + TypeScript + Vite
 
-> A modern, modular and highly customizable overlay framework for Mix It Up and OBS.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Aurora Overlay Framework is an open-source project focused on making professional stream overlays easy to build, customize and share.
+Currently, two official plugins are available:
 
-Instead of editing HTML, CSS or JavaScript, users can configure overlays through simple configuration files, themes and reusable widgets.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
----
+## React Compiler
 
-## ✨ Vision
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-Aurora aims to bridge the gap between powerful overlays and ease of use.
+## Expanding the ESLint configuration
 
-Whether you're a streamer, designer or developer, Aurora provides a flexible foundation for creating beautiful overlays without unnecessary complexity.
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
----
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## 🚀 Planned Features
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-- 🎨 Theme system
-- 🧩 Reusable widgets
-- ⚙️ Configuration-driven setup
-- ✨ Animation engine
-- 📡 Mix It Up integration
-- 🎥 OBS Browser Source support
-- 🔌 Plugin architecture
-- 📦 Easy installation
-- 🌙 Modern UI components
-
----
-
-## 🗺 Roadmap
-
-### Phase 1
-- Repository setup
-- Documentation
-- Architecture
-
-### Phase 2
-- Core framework
-- Theme engine
-- Widget engine
-
-### Phase 3
-- Event system
-- Animations
-- OBS integration
-
-### Phase 4
-- Plugins
-- Example overlays
-- Version 1.0 release
-
----
-
-## 📂 Project Structure
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 
 ```
-assets/
-docs/
-examples/
-scripts/
-src/
-tests/
-themes/
-widgets/
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+
 ```
-
----
-
-## 🛠 Tech Stack
-
-- TypeScript
-- HTML5
-- CSS3
-- Vite
-- GitHub Actions
-- ESLint
-- Prettier
-
----
-
-## 📚 Documentation
-
-Project documentation will be available inside the `docs` folder.
-
----
-
-## 🤝 Contributing
-
-Contributions, feature requests and bug reports are welcome.
-
----
-
-## 📜 License
-
-Released under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-Created by Remco Kuipers as an open-source portfolio project.
