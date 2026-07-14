@@ -117,3 +117,92 @@ Vite supports these goals by providing:
 - Optimized production builds.
 - Excellent integration with React and TypeScript.
 - A modern and lightweight development workflow.
+
+## Tailwind CSS
+
+### Purpose
+
+Tailwind CSS is the utility-first CSS framework used to build Aurora Overlay Framework's user interface.
+
+It enables consistent, maintainable, and responsive styling throughout the application.
+
+### Why Tailwind CSS
+
+Aurora contains a large number of reusable interface components, including editors, configuration panels, dialogs,
+toolbars, and preview windows. Maintaining a consistent visual design across these components is essential for usability
+and long-term maintainability.
+
+Tailwind CSS supports these goals by providing:
+
+- A utility-first approach that encourages reusable styling patterns.
+- Consistent spacing, typography, and color usage.
+- Responsive design without complex custom CSS.
+- Easy customization through a centralized design configuration.
+- Reduced CSS duplication and improved maintainability.
+
+## React Router
+
+### Purpose
+
+React Router is used to manage navigation within Aurora Overlay Framework.
+
+It enables the application to function as a Single Page Application (SPA) while providing clear navigation between
+different views.
+
+### Why React Router
+
+Aurora consists of multiple functional areas, including project management, scene editing, theme customization, overlay
+configuration, and application settings. Managing these features within a Single Page Application provides a seamless
+user experience while maintaining a consistent application state.
+
+React Router supports these goals by providing:
+
+- Client-side navigation without full page reloads.
+- A clear and scalable routing structure.
+- Better separation between application views.
+- Deep linking to specific application sections.
+- Excellent integration with React.
+
+## Zustand
+
+### Purpose
+
+Zustand is the global state management library used by Aurora Overlay Framework.
+
+It provides a simple and scalable solution for sharing application state across independent components.
+
+### Why Zustand
+
+Aurora contains multiple editors and configuration panels that need access to shared application data, such as the
+active project, selected scene, current theme, user preferences, and editor state.
+
+Zustand supports these architectural requirements by providing:
+
+- Lightweight global state management.
+- Minimal boilerplate and straightforward APIs.
+- Efficient state updates with selective component re-rendering.
+- Excellent integration with React and TypeScript.
+- A scalable solution that remains easy to maintain as the application grows.
+
+## Zod
+
+### Purpose
+
+Zod is the schema validation library used by Aurora Overlay Framework.
+
+It validates external data and user input at runtime to ensure data integrity throughout the application.
+
+### Why Zod
+
+Aurora imports and exports project files, processes user input, and manages complex configuration objects. Since
+TypeScript only provides compile-time type checking, runtime validation is required to verify that external data matches
+the expected structure.
+
+Zod supports these architectural requirements by providing:
+
+- Runtime validation of external data.
+- Type-safe schema definitions.
+- Automatic TypeScript type inference.
+- Clear and consistent validation rules.
+- Improved application reliability by preventing invalid data from entering the system.
+
