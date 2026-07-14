@@ -267,3 +267,190 @@ Future versions of the Widget Engine may provide:
 - Widget versioning
 - Widget dependency validation
 - Remote widget packages
+
+### Theme Engine
+
+#### Purpose
+
+The Theme Engine manages the visual appearance of Aurora Overlay Framework by providing centralized design tokens that
+define the application's look and feel.
+
+Rather than allowing individual widgets to define their own styling, the Theme Engine provides a consistent visual
+language that can be applied across the entire project.
+
+#### Responsibilities
+
+The Theme Engine is responsible for:
+
+- Managing available themes.
+- Providing design tokens.
+- Resolving theme values.
+- Applying theme changes.
+- Maintaining visual consistency.
+- Supporting future custom themes.
+
+#### Out of Scope
+
+The Theme Engine is **not** responsible for:
+
+- Rendering widgets.
+- Managing widget behavior.
+- Managing project data.
+- Exporting overlays.
+
+These responsibilities belong to their respective modules.
+
+#### Dependencies
+
+The Theme Engine communicates through the Core and should remain independent from feature-specific implementations.
+
+#### Public API
+
+The Theme Engine exposes services for:
+
+- Theme loading
+- Theme switching
+- Design token resolution
+- Theme validation
+
+#### Future Extensions
+
+Future versions of the Theme Engine may provide:
+
+- User-created themes
+- Theme packages
+- Theme marketplace
+- Theme inheritance
+- Live theme editing
+
+#### Design Principle
+
+Widgets never own their visual style. Instead, they consume design tokens provided by the Theme Engine.
+
+This ensures visual consistency throughout the application, simplifies theme management and allows complete visual
+customization without modifying individual widgets.
+
+### Project Workspace
+
+#### Purpose
+
+The Project Workspace manages the active overlay project and maintains the user's working environment throughout the
+editing session.
+
+It provides the context in which projects are created, edited and organized while coordinating project-specific state
+through the Core.
+
+#### Responsibilities
+
+The Project Workspace is responsible for:
+
+- Managing the active project.
+- Managing scenes within the project.
+- Tracking the current selection.
+- Managing editor state.
+- Tracking unsaved changes.
+- Supporting project persistence.
+- Coordinating workspace-related state.
+
+#### Out of Scope
+
+The Project Workspace is **not** responsible for:
+
+- Rendering the user interface.
+- Managing widget behavior.
+- Applying themes.
+- Exporting overlays.
+
+These responsibilities belong to their dedicated modules.
+
+#### Dependencies
+
+The Project Workspace communicates through the Core and remains independent from feature-specific implementations.
+
+#### Public API
+
+The Project Workspace exposes services for:
+
+- Project creation
+- Project loading
+- Project saving
+- Workspace state
+- Selection management
+
+#### Future Extensions
+
+Future versions of the Project Workspace may provide:
+
+- Autosave
+- Workspace recovery
+- Recent projects
+- Multiple open projects
+- Workspace snapshots
+
+#### Design Principle
+
+The Project Workspace owns the editing session, not the visual presentation of that session.
+
+Editor state should remain independent from the user interface to ensure flexibility and maintainability.
+
+### Asset Library
+
+#### Purpose
+
+The Asset Library provides centralized management for all reusable project assets within Aurora Overlay Framework.
+
+It stores, organizes and provides access to resources that can be used throughout the application while remaining
+independent of the modules that consume them.
+
+#### Responsibilities
+
+The Asset Library is responsible for:
+
+- Managing project assets.
+- Importing external resources.
+- Organizing assets.
+- Providing asset metadata.
+- Maintaining asset references.
+- Supporting asset reuse across projects.
+
+#### Out of Scope
+
+The Asset Library is **not** responsible for:
+
+- Rendering assets.
+- Managing widget behavior.
+- Applying themes.
+- Exporting projects.
+
+These responsibilities belong to their respective modules.
+
+#### Dependencies
+
+The Asset Library communicates through the Core and remains independent from feature-specific modules.
+
+#### Public API
+
+The Asset Library exposes services for:
+
+- Asset import
+- Asset retrieval
+- Asset organization
+- Asset metadata
+- Asset validation
+
+#### Future Extensions
+
+Future versions of the Asset Library may provide:
+
+- Asset collections
+- Asset tagging
+- Asset search
+- Cloud asset libraries
+- Asset optimization
+
+#### Design Principle
+
+Assets are passive resources.
+
+The Asset Library owns the lifecycle of assets, while other modules consume them through stable references rather than
+direct ownership.
