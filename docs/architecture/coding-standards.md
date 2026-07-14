@@ -124,3 +124,88 @@ Business logic belongs inside services.
 Presentation belongs inside React components.
 
 Domain models describe the application state.
+
+---
+
+# CSS
+
+## General Principles
+
+CSS should remain simple, predictable and component-oriented.
+
+Prefer maintainability over visual complexity.
+
+---
+
+## Component Styles
+
+Every React component owns its own stylesheet.
+
+Example:
+
+```
+Sidebar/
+├── Sidebar.tsx
+└── Sidebar.css
+```
+
+Component styles should never be placed inside unrelated files.
+
+---
+
+## Layout
+
+Use CSS Grid for application layouts whenever appropriate.
+
+Use Flexbox for aligning elements within individual components.
+
+---
+
+## CSS Custom Properties
+
+Avoid magic numbers where reusable values are appropriate.
+
+Prefer CSS Custom Properties.
+
+Example:
+
+```css
+:root {
+    --sidebar-width: 260px;
+    --properties-width: 320px;
+}
+```
+
+---
+
+## Naming
+
+CSS class names should clearly describe the component they belong to.
+
+Example:
+
+```css
+.sidebar { }
+
+.canvas { }
+
+.properties-panel { }
+```
+
+Avoid generic names such as:
+
+```css
+.container { }
+
+.box { }
+
+.content { }
+```
+
+---
+
+## Scope
+
+Component styles should affect only their own component.
+
+Avoid styling unrelated components from another component stylesheet.

@@ -1,5 +1,7 @@
 .canvas {
     grid-area: canvas;
 
-    padding: 16px;
+    padding: 20px;
+
+    background: var(--color-canvas);
 }

@@ -3,7 +3,7 @@ import "./EditorShell.css"
 import {Header} from "../Header/Header.tsx";
 import {Sidebar} from "../Sidebar/Sidebar.tsx";
 import {Canvas} from "../Canvas/Canvas.tsx";
-import {PropertiesPanel} from "../Propertiespanel/PropertiesPanel.tsx";
+import {PropertiesPanel} from "../PropertiesPanel/PropertiesPanel.tsx";
 import {StatusBar} from "../StatusBar/StatusBar.tsx";
 
 export function EditorShell() {

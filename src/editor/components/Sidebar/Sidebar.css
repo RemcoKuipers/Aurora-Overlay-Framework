@@ -1,6 +1,9 @@
 .sidebar {
     grid-area: sidebar;
 
-    border-right: 1px solid #444;
-    padding: 16px;
+    padding: 20px;
+
+    background: var(--color-panel);
+
+    border-right: 1px solid var(--color-border);
 }
