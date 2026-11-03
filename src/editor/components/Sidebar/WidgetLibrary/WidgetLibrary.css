@@ -1,0 +1,48 @@
+.widget-library {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.widget-library h2 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+}
+
+.widget-library-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.widget-library-button {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.widget-library-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.widget-library-button:focus-visible {
+    outline: 2px solid #7c9cff;
+    outline-offset: 2px;
+}
+
+.widget-library-button.selected {
+    background-color: rgba(124, 156, 255, 0.2);
+    outline: 1px solid #7c9cff;
+}
