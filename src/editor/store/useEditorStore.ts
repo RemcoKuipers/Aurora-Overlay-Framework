@@ -24,7 +24,7 @@ interface EditorState {
 export const useEditorStore = create<EditorState>((set) => ({
     project: createDemoProject(),
 
-    canvasSettings:{
+    canvasSettings: {
         showGrid: true,
         snapToGrid: true,
         gridSize: 40,
@@ -63,10 +63,10 @@ export const useEditorStore = create<EditorState>((set) => ({
     selectedWidgetInstanceId: null,
 
     selectWidgetInstance: (id) =>
-        set({ selectedWidgetInstanceId: id }),
+        set({selectedWidgetInstanceId: id}),
 
     clearSelection: () =>
-        set({ selectedWidgetInstanceId: null }),
+        set({selectedWidgetInstanceId: null}),
 
     updateWidgetPosition: (instanceId, x, y) =>
         set((state) => ({
@@ -81,26 +81,19 @@ export const useEditorStore = create<EditorState>((set) => ({
                             return instance;
                         }
 
-                        const maxX = Math.max(
-                            0,
-                            1920 - instance.size.width
-                        );
-
-                        const maxY = Math.max(
-                            0,
-                            1080 - instance.size.height
-                        );
+                        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+                            return instance;
+                        }
 
                         return {
                             ...instance,
                             position: {
-                                x: Math.min(Math.max(x, 0), maxX),
-                                y: Math.min(Math.max(y, 0), maxY),
+                                x,
+                                y,
                             },
                         };
                     }),
                 })),
             },
         })),
-
 }));

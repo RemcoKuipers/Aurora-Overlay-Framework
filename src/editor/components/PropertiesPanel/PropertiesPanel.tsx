@@ -61,7 +61,6 @@ export function PropertiesPanel() {
                         />
                         <NumberPropertyInput
                             value={selectedInstance.position.x}
-                            min={0}
                             max={Math.max(0, 1920 - selectedInstance.size.width)}
                             onChange={(newX) => {
                                 updateWidgetPosition(
@@ -82,7 +81,6 @@ export function PropertiesPanel() {
 
                         <NumberPropertyInput
                             value={selectedInstance.position.y}
-                            min={0}
                             max={Math.max(0, 1080 - selectedInstance.size.height)}
                             onChange={(newY) => {
                                 updateWidgetPosition(
