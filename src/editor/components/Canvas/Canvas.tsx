@@ -40,6 +40,10 @@ export function Canvas() {
     const updateWidgetPosition = useEditorStore(
         (state) => state.updateWidgetPosition);
 
+    const updateWidgetSize = useEditorStore(
+        (state) => state.updateWidgetSize
+    );
+
     const addWidget = useEditorStore(
         (state) => state.addWidget
     );
@@ -50,6 +54,24 @@ export function Canvas() {
         startPointerY: number;
         startWidgetX: number;
         startWidgetY: number;
+        stageWidth: number;
+        stageHeight: number;
+    } | null>(null);
+
+    const dragFrameRef = useRef<number | null>(null);
+
+    const pendingDragPositionRef = useRef<{
+        instanceId: string;
+        x: number;
+        y: number;
+    } | null>(null);
+
+    const resizeRef = useRef<{
+        instanceId: string;
+        startPointerX: number;
+        startPointerY: number;
+        startWidth: number;
+        startHeight: number;
         stageWidth: number;
         stageHeight: number;
     } | null>(null);
@@ -100,6 +122,16 @@ export function Canvas() {
     function handleWidgetPointerMove(
         event: PointerEvent<HTMLDivElement>
     ) {
+
+        if (resizeRef.current) {
+            return;
+        }
+
+        if (event.buttons !== 1) {
+            dragRef.current = null;
+            return;
+        }
+
         const drag = dragRef.current;
 
         if (!drag) {
@@ -128,11 +160,47 @@ export function Canvas() {
             ? snapToGrid(newY, canvasSettings.gridSize)
             : newY;
 
-        updateWidgetPosition(
-            drag.instanceId,
-            finalX,
-            finalY
+        const currentInstance = activeScene?.widgetInstances.find(
+            (instance) => instance.id === drag.instanceId
         );
+
+        if (!currentInstance) {
+            return;
+        }
+
+        if (
+            currentInstance.position.x === finalX &&
+            currentInstance.position.y === finalY
+        ) {
+            return;
+        }
+
+        pendingDragPositionRef.current = {
+            instanceId: drag.instanceId,
+            x: finalX,
+            y: finalY,
+        };
+
+        if (dragFrameRef.current !== null) {
+            return;
+        }
+
+        dragFrameRef.current = requestAnimationFrame(() => {
+            dragFrameRef.current = null;
+
+            const pendingPosition = pendingDragPositionRef.current;
+            pendingDragPositionRef.current = null;
+
+            if (!pendingPosition) {
+                return;
+            }
+
+            updateWidgetPosition(
+                pendingPosition.instanceId,
+                pendingPosition.x,
+                pendingPosition.y
+            );
+        });
     }
 
     function handleWidgetPointerUp(
@@ -142,7 +210,23 @@ export function Canvas() {
             return;
         }
 
+        if (dragFrameRef.current !== null) {
+            cancelAnimationFrame(dragFrameRef.current);
+            dragFrameRef.current = null;
+        }
+
+        const pendingPosition = pendingDragPositionRef.current;
+        pendingDragPositionRef.current = null;
+
         dragRef.current = null;
+
+        if (pendingPosition) {
+            updateWidgetPosition(
+                pendingPosition.instanceId,
+                pendingPosition.x,
+                pendingPosition.y
+            );
+        }
 
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
             event.currentTarget.releasePointerCapture(event.pointerId);
@@ -150,7 +234,119 @@ export function Canvas() {
     }
 
     function handleWidgetPointerCancel() {
+        if (dragFrameRef.current !== null) {
+            cancelAnimationFrame(dragFrameRef.current);
+            dragFrameRef.current = null;
+        }
+
+        pendingDragPositionRef.current = null;
         dragRef.current = null;
+    }
+
+    function handleResizePointerDown(
+        event: PointerEvent<HTMLDivElement>,
+        instanceId: string
+    ) {
+
+        if (event.button !== 0) {
+            return;
+        }
+        event.stopPropagation();
+
+        const instance = activeScene?.widgetInstances.find(
+            (instance) => instance.id === instanceId
+        );
+        const stage = event.currentTarget.closest(".canvas-stage");
+
+        if (!instance || !(stage instanceof HTMLElement)) {
+            return;
+        }
+        const stageRect = stage.getBoundingClientRect();
+
+        if (stageRect.width === 0 || stageRect.height === 0) {
+            return;
+        }
+
+        resizeRef.current = {
+            instanceId,
+            startPointerX: event.clientX,
+            startPointerY: event.clientY,
+            startWidth: instance.size.width,
+            startHeight: instance.size.height,
+            stageWidth: stageRect.width,
+            stageHeight: stageRect.height
+        }
+
+        event.currentTarget.setPointerCapture(event.pointerId);
+
+    }
+
+    function handleResizePointerMove(
+        event: PointerEvent<HTMLDivElement>
+    ) {
+        const resize = resizeRef.current;
+
+        if (!resize) {
+            return;
+        }
+
+        const deltaX = event.clientX - resize.startPointerX;
+        const deltaY = event.clientY - resize.startPointerY;
+
+        const scaleX = CANVAS_WIDTH / resize.stageWidth;
+        const scaleY = CANVAS_HEIGHT / resize.stageHeight;
+
+        const newWidth = Math.round(
+            resize.startWidth + deltaX * scaleX
+        );
+
+        const newHeight = Math.round(
+            resize.startHeight + deltaY * scaleY
+        );
+
+        const minWidth = 40;
+        const minHeight = 40;
+
+        const constrainedWidth = Math.max(minWidth, newWidth);
+        const constrainedHeight = Math.max(minHeight, newHeight);
+
+        const finalWidth = canvasSettings.snapToGrid
+            ? Math.max(
+                minWidth,
+                snapToGrid(constrainedWidth, canvasSettings.gridSize)
+            )
+            : constrainedWidth;
+
+        const finalHeight = canvasSettings.snapToGrid
+            ? Math.max(
+                minHeight,
+                snapToGrid(constrainedHeight, canvasSettings.gridSize)
+            )
+            : constrainedHeight;
+
+        updateWidgetSize(
+            resize.instanceId,
+            finalWidth,
+            finalHeight
+        );
+    }
+
+    function handleResizePointerUp(
+        event: PointerEvent<HTMLDivElement>
+    ) {
+        if (!resizeRef.current) {
+            return;
+        }
+
+        resizeRef.current = null;
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+    }
+
+    function handleResizePointerCancel() {
+        resizeRef.current = null;
     }
 
     function handleCanvasDragOver(event: DragEvent<HTMLDivElement>) {
@@ -248,7 +444,30 @@ export function Canvas() {
                             }}
                         >
                             <WidgetRenderer widget={widget}/>
+
+                            {selectedWidgetInstanceId === instance.id && (
+                                <div
+                                    className="canvas-resize-handle"
+                                    onPointerDown={(event) => {
+                                        handleResizePointerDown(event, instance.id);
+                                    }}
+                                    onPointerMove={(event) => {
+                                        event.stopPropagation();
+                                        handleResizePointerMove(event);
+                                    }}
+                                    onPointerUp={(event) => {
+                                        event.stopPropagation();
+                                        handleResizePointerUp(event);
+                                    }}
+                                    onPointerCancel={(event) => {
+                                        event.stopPropagation();
+                                        handleResizePointerCancel();
+                                    }}
+                                    onClick={(event) => event.stopPropagation()}
+                                />
+                            )}
                         </div>
+
                     );
                 })}
             </div>

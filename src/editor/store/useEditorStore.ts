@@ -23,6 +23,13 @@ interface EditorState {
         y: number
     ) => void;
 
+    updateWidgetSize: (
+        instanceId: string,
+        width: number,
+        height: number
+    ) => void;
+
+
     addWidget: (widgetType: WidgetType,
                 position?: { x: number, y: number }
     ) => void;
@@ -76,6 +83,52 @@ export const useEditorStore = create<EditorState>((set) => ({
         set({selectedWidgetInstanceId: null}),
 
     updateWidgetPosition: (instanceId, x, y) =>
+        set((state) => {
+            if (!Number.isFinite(x) || !Number.isFinite(y)) {
+                return state;
+            }
+
+            const instance = state.project.scenes
+                .flatMap((scene) => scene.widgetInstances)
+                .find((instance) => instance.id === instanceId);
+
+            if (!instance) {
+                return state;
+            }
+
+            if (
+                instance.position.x === x &&
+                instance.position.y === y
+            ) {
+                return state;
+            }
+
+            return {
+                project: {
+                    ...state.project,
+
+                    scenes: state.project.scenes.map((scene) => ({
+                        ...scene,
+
+                        widgetInstances: scene.widgetInstances.map((instance) => {
+                            if (instance.id !== instanceId) {
+                                return instance;
+                            }
+
+                            return {
+                                ...instance,
+                                position: {
+                                    x,
+                                    y,
+                                },
+                            };
+                        }),
+                    })),
+                },
+            };
+        }),
+
+    updateWidgetSize: (instanceId, width, height) =>
         set((state) => ({
             project: {
                 ...state.project,
@@ -88,26 +141,32 @@ export const useEditorStore = create<EditorState>((set) => ({
                             return instance;
                         }
 
-                        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+                        if (!Number.isFinite(width) || !Number.isFinite(height)) {
+                            return instance;
+                        }
+
+                        if (width <= 0 || height <= 0) {
                             return instance;
                         }
 
                         return {
                             ...instance,
-                            position: {
-                                x,
-                                y,
+                            size: {
+                                width,
+                                height,
                             },
                         };
                     }),
                 })),
             },
         })),
+
+
     addWidget: (widgetType, position?: { x: number; y: number }) => {
         const newWidget = createWidget(widgetType);
         const newInstance = createWidgetInstance(newWidget.id, newWidget.type);
 
-        if(position) {
+        if (position) {
             newInstance.position = position;
         }
 
