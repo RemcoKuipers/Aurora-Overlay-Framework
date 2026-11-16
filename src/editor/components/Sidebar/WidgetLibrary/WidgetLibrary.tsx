@@ -1,6 +1,7 @@
 import "./WidgetLibrary.css";
 import type {WidgetType} from "../../../../widgets/model/WidgetType.ts";
 import {useState} from "react";
+import {useEditorStore} from "../../../store/useEditorStore.ts";
 
 interface WidgetLibraryItem {
     type: WidgetType;
@@ -18,6 +19,9 @@ const availableWidgets: WidgetLibraryItem[] = [
 export function WidgetLibrary() {
     const [selectedWidgetType, setSelectedWidgetType] =
     useState<WidgetType | null>(null);
+    const addWidget = useEditorStore(
+        (state) => state.addWidget
+    );
 
     return (
         <section className="widget-library">
@@ -31,8 +35,10 @@ export function WidgetLibrary() {
                             className={`widget-library-button ${
                                 selectedWidgetType === widget.type ? "selected" : ""
                             }`}
-                            onClick={() => setSelectedWidgetType(widget.type)}
-                            aria-pressed={selectedWidgetType === widget.type}
+                            onClick={() => {
+                                setSelectedWidgetType(widget.type);
+                                addWidget(widget.type);
+                            }}
                         >
                             {widget.label}
                         </button>

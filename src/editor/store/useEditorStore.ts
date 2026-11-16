@@ -1,7 +1,10 @@
-import { create } from "zustand";
+import {create} from "zustand";
 import type {Project} from "../../project/model/Project.ts";
 import {createDemoProject} from "../data/createDemoProject.ts";
 import type {CanvasSettings} from "../model/CanvasSettings.ts";
+import type {WidgetType} from "../../widgets/model/WidgetType.ts";
+import {createWidget} from "../../widgets/factory/WidgetFactory.ts";
+import {createWidgetInstance} from "../../widgets/factory/WidgetInstanceFactory.ts";
 
 interface EditorState {
     project: Project;
@@ -18,7 +21,9 @@ interface EditorState {
         instanceId: string,
         x: number,
         y: number
-    )=> void;
+    ) => void;
+
+    addWidget: (widgetType: WidgetType) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -96,4 +101,34 @@ export const useEditorStore = create<EditorState>((set) => ({
                 })),
             },
         })),
+    addWidget: (widgetType) => {
+        const newWidget = createWidget(widgetType);
+        const newInstance = createWidgetInstance(newWidget.id, newWidget.type);
+
+        set((state) => ({
+            project: {
+                ...state.project,
+
+                widgets: [
+                    ...state.project.widgets,
+                    newWidget,
+                ],
+
+                scenes: state.project.scenes.map((scene, index) => {
+                    if (index !== 0) {
+                        return scene;
+                    }
+
+                    return {
+                        ...scene,
+                        widgetInstances:[
+                            ...scene.widgetInstances,
+                            newInstance,
+                        ],
+                    }
+                })
+            },
+            selectedWidgetInstanceId: newInstance.id,
+        }));
+    },
 }));
