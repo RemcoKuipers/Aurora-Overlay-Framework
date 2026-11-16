@@ -1,12 +1,20 @@
-import {WidgetRenderer} from "../../../widgets/components/WidgetRenderer/WidgetRenderer";
-import "./Canvas.css";
-import {useEditorStore} from "../../store/useEditorStore.ts";
-import type {PointerEvent, DragEvent} from "react";
 import {useRef} from "react";
+import type {DragEvent} from "react";
+
+import {WidgetRenderer} from "../../../widgets/components/WidgetRenderer/WidgetRenderer";
+
+import {useEditorStore} from "../../store/useEditorStore.ts";
 import {snapToGrid} from "../../utils/snapToGrid.ts";
+
 import {CanvasToolbar} from "../CanvasToolbar/CanvasToolbar.tsx";
-import type {WidgetType} from "../../../widgets/model/WidgetType.ts";
+
 import {useWidgetDrag} from "../../hooks/useWidgetDrag.ts";
+import {useWidgetResize} from "../../hooks/useWidgetResize.ts";
+
+import type {WidgetType} from "../../../widgets/model/WidgetType.ts";
+import type {CanvasInteraction} from "../../model/CanvasInteraction.ts";
+
+import "./Canvas.css";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
@@ -22,13 +30,18 @@ function isWidgetType(value: string): value is WidgetType {
 }
 
 export function Canvas() {
-    const project = useEditorStore((state) => state.project);
+    // Zustand-selectors
+    const project = useEditorStore(
+        (state) => state.project
+    );
+
     const selectedWidgetInstanceId = useEditorStore(
         (state) => state.selectedWidgetInstanceId
     );
 
     const canvasSettings = useEditorStore(
-        (state) => state.canvasSettings);
+        (state) => state.canvasSettings
+    );
 
     const selectWidgetInstance = useEditorStore(
         (state) => state.selectWidgetInstance
@@ -38,183 +51,116 @@ export function Canvas() {
         (state) => state.clearSelection
     );
 
-    const updateWidgetSize = useEditorStore(
-        (state) => state.updateWidgetSize
-    );
-
     const addWidget = useEditorStore(
         (state) => state.addWidget
     );
 
-    const resizeRef = useRef<{
-        instanceId: string;
-        startPointerX: number;
-        startPointerY: number;
-        startWidth: number;
-        startHeight: number;
-        stageWidth: number;
-        stageHeight: number;
-    } | null>(null);
+    // Gedeelde interactiestatus
+    const interactionRef = useRef<CanvasInteraction>("idle");
 
+    // Drag-hook
     const {
         handleWidgetPointerDown,
         handleWidgetPointerMove,
         handleWidgetPointerUp,
         handleWidgetPointerCancel,
-    } = useWidgetDrag(resizeRef);
+    } = useWidgetDrag(interactionRef);
+
+    // Resize-hook
+    const {
+        handleResizePointerDown,
+        handleResizePointerMove,
+        handleResizePointerUp,
+        handleResizePointerCancel,
+    } = useWidgetResize(interactionRef);
 
     const activeScene = project.scenes[0];
 
-    function handleResizePointerDown(
-        event: PointerEvent<HTMLDivElement>,
-        instanceId: string
+    // Widget vanuit de library boven het Canvas slepen
+    function handleCanvasDragOver(
+        event: DragEvent<HTMLDivElement>
     ) {
-
-        if (event.button !== 0) {
-            return;
-        }
-        event.stopPropagation();
-
-        const instance = activeScene?.widgetInstances.find(
-            (instance) => instance.id === instanceId
-        );
-        const stage = event.currentTarget.closest(".canvas-stage");
-
-        if (!instance || !(stage instanceof HTMLElement)) {
-            return;
-        }
-        const stageRect = stage.getBoundingClientRect();
-
-        if (stageRect.width === 0 || stageRect.height === 0) {
-            return;
-        }
-
-        resizeRef.current = {
-            instanceId,
-            startPointerX: event.clientX,
-            startPointerY: event.clientY,
-            startWidth: instance.size.width,
-            startHeight: instance.size.height,
-            stageWidth: stageRect.width,
-            stageHeight: stageRect.height
-        }
-
-        event.currentTarget.setPointerCapture(event.pointerId);
-
-    }
-
-    function handleResizePointerMove(
-        event: PointerEvent<HTMLDivElement>
-    ) {
-        const resize = resizeRef.current;
-
-        if (!resize) {
-            return;
-        }
-
-        const deltaX = event.clientX - resize.startPointerX;
-        const deltaY = event.clientY - resize.startPointerY;
-
-        const scaleX = CANVAS_WIDTH / resize.stageWidth;
-        const scaleY = CANVAS_HEIGHT / resize.stageHeight;
-
-        const newWidth = Math.round(
-            resize.startWidth + deltaX * scaleX
-        );
-
-        const newHeight = Math.round(
-            resize.startHeight + deltaY * scaleY
-        );
-
-        const minWidth = 40;
-        const minHeight = 40;
-
-        const constrainedWidth = Math.max(minWidth, newWidth);
-        const constrainedHeight = Math.max(minHeight, newHeight);
-
-        const finalWidth = canvasSettings.snapToGrid
-            ? Math.max(
-                minWidth,
-                snapToGrid(constrainedWidth, canvasSettings.gridSize)
-            )
-            : constrainedWidth;
-
-        const finalHeight = canvasSettings.snapToGrid
-            ? Math.max(
-                minHeight,
-                snapToGrid(constrainedHeight, canvasSettings.gridSize)
-            )
-            : constrainedHeight;
-
-        updateWidgetSize(
-            resize.instanceId,
-            finalWidth,
-            finalHeight
-        );
-    }
-
-    function handleResizePointerUp(
-        event: PointerEvent<HTMLDivElement>
-    ) {
-        if (!resizeRef.current) {
-            return;
-        }
-
-        resizeRef.current = null;
-
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        }
-    }
-
-    function handleResizePointerCancel() {
-        resizeRef.current = null;
-    }
-
-    function handleCanvasDragOver(event: DragEvent<HTMLDivElement>) {
         event.preventDefault();
+
         event.dataTransfer.dropEffect = "copy";
     }
 
-    function handleCanvasDrop(event: DragEvent<HTMLDivElement>) {
+    // Widget vanuit de library op het Canvas plaatsen
+    function handleCanvasDrop(
+        event: DragEvent<HTMLDivElement>
+    ) {
         event.preventDefault();
 
-        const widgetType = event.dataTransfer.getData("text/plain");
+        const widgetType =
+            event.dataTransfer.getData("text/plain");
+
         if (!isWidgetType(widgetType)) {
             return;
         }
-        const stageRect = event.currentTarget.getBoundingClientRect();
 
-        const mouseX = event.clientX - stageRect.left;
-        const mouseY = event.clientY - stageRect.top;
+        const stageRect =
+            event.currentTarget.getBoundingClientRect();
 
-        const scaleX = CANVAS_WIDTH / stageRect.width;
-        const scaleY = CANVAS_HEIGHT / stageRect.height;
+        if (
+            stageRect.width === 0 ||
+            stageRect.height === 0
+        ) {
+            return;
+        }
 
-        const virtualX = Math.round(mouseX * scaleX)
-        const virtualY = Math.round(mouseY * scaleY)
+        // Bereken de muispositie binnen het Canvas
+        const mouseX =
+            event.clientX - stageRect.left;
 
+        const mouseY =
+            event.clientY - stageRect.top;
+
+        // Zet schermpixels om naar virtuele Canvas-pixels
+        const scaleX =
+            CANVAS_WIDTH / stageRect.width;
+
+        const scaleY =
+            CANVAS_HEIGHT / stageRect.height;
+
+        const virtualX = Math.round(
+            mouseX * scaleX
+        );
+
+        const virtualY = Math.round(
+            mouseY * scaleY
+        );
+
+        // Pas eventueel Snap to Grid toe
         const finalX = canvasSettings.snapToGrid
-            ? snapToGrid(virtualX, canvasSettings.gridSize)
+            ? snapToGrid(
+                virtualX,
+                canvasSettings.gridSize
+            )
             : virtualX;
+
         const finalY = canvasSettings.snapToGrid
-            ? snapToGrid(virtualY, canvasSettings.gridSize)
+            ? snapToGrid(
+                virtualY,
+                canvasSettings.gridSize
+            )
             : virtualY;
 
-
+        // Voeg de widget toe aan het project
         addWidget(widgetType, {
             x: finalX,
-            y: finalY
+            y: finalY,
         });
-
     }
 
     return (
         <main className="canvas">
             <CanvasToolbar/>
+
             <div
                 className={`canvas-stage ${
-                    canvasSettings.showGrid ? "" : "canvas-stage--no-grid"
+                    canvasSettings.showGrid
+                        ? ""
+                        : "canvas-stage--no-grid"
                 }`}
                 style={{
                     backgroundSize: `${
@@ -233,7 +179,8 @@ export function Canvas() {
 
                 {activeScene?.widgetInstances.map((instance) => {
                     const widget = project.widgets.find(
-                        (widget) => widget.id === instance.widgetId
+                        (widget) =>
+                            widget.id === instance.widgetId
                     );
 
                     if (!widget || !instance.visible) {
@@ -243,53 +190,109 @@ export function Canvas() {
                     return (
                         <div
                             key={instance.id}
+
                             className={`canvas-widget ${
-                                selectedWidgetInstanceId === instance.id ? "canvas-widget--selected" : ""
+                                selectedWidgetInstanceId === instance.id
+                                    ? "canvas-widget--selected"
+                                    : ""
                             }`}
+
+                            // Widget verplaatsen
                             onPointerDown={(event) => {
-                                handleWidgetPointerDown(event, instance.id);
+                                handleWidgetPointerDown(
+                                    event,
+                                    instance.id
+                                );
                             }}
-                            onPointerMove={handleWidgetPointerMove}
-                            onPointerUp={handleWidgetPointerUp}
-                            onPointerCancel={handleWidgetPointerCancel}
+
+                            onPointerMove={
+                                handleWidgetPointerMove
+                            }
+
+                            onPointerUp={
+                                handleWidgetPointerUp
+                            }
+
+                            onPointerCancel={
+                                handleWidgetPointerCancel
+                            }
+
+                            // Widget selecteren
                             onClick={(event) => {
                                 event.stopPropagation();
-                                selectWidgetInstance(instance.id);
+
+                                if (
+                                    selectedWidgetInstanceId !==
+                                    instance.id
+                                ) {
+                                    selectWidgetInstance(instance.id);
+                                }
                             }}
+
+                            // Positie en afmetingen
                             style={{
-                                left: `${(instance.position.x / CANVAS_WIDTH) * 100}%`,
-                                top: `${(instance.position.y / CANVAS_HEIGHT) * 100}%`,
-                                width: `${(instance.size.width / CANVAS_WIDTH) * 100}%`,
-                                height: `${(instance.size.height / CANVAS_HEIGHT) * 100}%`,
+                                left: `${
+                                    (instance.position.x / CANVAS_WIDTH) * 100
+                                }%`,
+
+                                top: `${
+                                    (instance.position.y / CANVAS_HEIGHT) * 100
+                                }%`,
+
+                                width: `${
+                                    (instance.size.width / CANVAS_WIDTH) * 100
+                                }%`,
+
+                                height: `${
+                                    (instance.size.height / CANVAS_HEIGHT) * 100
+                                }%`,
+
                                 zIndex: instance.layer,
                                 opacity: instance.opacity,
                             }}
                         >
                             <WidgetRenderer widget={widget}/>
 
+                            {/* Resize handle voor geselecteerde widgets */}
                             {selectedWidgetInstanceId === instance.id && (
                                 <div
                                     className="canvas-resize-handle"
+
                                     onPointerDown={(event) => {
-                                        handleResizePointerDown(event, instance.id);
+                                        handleResizePointerDown(
+                                            event,
+                                            instance.id
+                                        );
                                     }}
+
                                     onPointerMove={(event) => {
                                         event.stopPropagation();
-                                        handleResizePointerMove(event);
+
+                                        handleResizePointerMove(
+                                            event
+                                        );
                                     }}
+
                                     onPointerUp={(event) => {
                                         event.stopPropagation();
-                                        handleResizePointerUp(event);
+
+                                        handleResizePointerUp(
+                                            event
+                                        );
                                     }}
+
                                     onPointerCancel={(event) => {
                                         event.stopPropagation();
+
                                         handleResizePointerCancel();
                                     }}
-                                    onClick={(event) => event.stopPropagation()}
+
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                    }}
                                 />
                             )}
                         </div>
-
                     );
                 })}
             </div>
