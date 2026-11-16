@@ -39,6 +39,11 @@ export function WidgetLibrary() {
                                 setSelectedWidgetType(widget.type);
                                 addWidget(widget.type);
                             }}
+                            draggable={true}
+                            onDragStart={(event) => {
+                                event.dataTransfer.setData("text/plain", widget.type);
+                                event.dataTransfer.effectAllowed = "copy";
+                            }}
                         >
                             {widget.label}
                         </button>

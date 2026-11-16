@@ -1,13 +1,24 @@
 import {WidgetRenderer} from "../../../widgets/components/WidgetRenderer/WidgetRenderer";
 import "./Canvas.css";
 import {useEditorStore} from "../../store/useEditorStore.ts";
-import type {PointerEvent} from "react";
+import type {PointerEvent, DragEvent} from "react";
 import {useRef} from "react";
 import {snapToGrid} from "../../utils/snapToGrid.ts";
 import {CanvasToolbar} from "../CanvasToolbar/CanvasToolbar.tsx";
+import type {WidgetType} from "../../../widgets/model/WidgetType.ts";
 
 const CANVAS_WIDTH = 1920;
 const CANVAS_HEIGHT = 1080;
+
+function isWidgetType(value: string): value is WidgetType {
+    return [
+        "text",
+        "image",
+        "camera-frame",
+        "goal-bar",
+        "chat-box",
+    ].includes(value);
+}
 
 export function Canvas() {
     const project = useEditorStore((state) => state.project);
@@ -28,6 +39,10 @@ export function Canvas() {
 
     const updateWidgetPosition = useEditorStore(
         (state) => state.updateWidgetPosition);
+
+    const addWidget = useEditorStore(
+        (state) => state.addWidget
+    );
 
     const dragRef = useRef<{
         instanceId: string;
@@ -138,6 +153,44 @@ export function Canvas() {
         dragRef.current = null;
     }
 
+    function handleCanvasDragOver(event: DragEvent<HTMLDivElement>) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "copy";
+    }
+
+    function handleCanvasDrop(event: DragEvent<HTMLDivElement>) {
+        event.preventDefault();
+
+        const widgetType = event.dataTransfer.getData("text/plain");
+        if (!isWidgetType(widgetType)) {
+            return;
+        }
+        const stageRect = event.currentTarget.getBoundingClientRect();
+
+        const mouseX = event.clientX - stageRect.left;
+        const mouseY = event.clientY - stageRect.top;
+
+        const scaleX = CANVAS_WIDTH / stageRect.width;
+        const scaleY = CANVAS_HEIGHT / stageRect.height;
+
+        const virtualX = Math.round(mouseX * scaleX)
+        const virtualY = Math.round(mouseY * scaleY)
+
+        const finalX = canvasSettings.snapToGrid
+            ? snapToGrid(virtualX, canvasSettings.gridSize)
+            : virtualX;
+        const finalY = canvasSettings.snapToGrid
+            ? snapToGrid(virtualY, canvasSettings.gridSize)
+            : virtualY;
+
+
+        addWidget(widgetType, {
+            x: finalX,
+            y: finalY
+        });
+
+    }
+
     return (
         <main className="canvas">
             <CanvasToolbar/>
@@ -153,6 +206,8 @@ export function Canvas() {
                     }%`,
                 }}
                 onClick={clearSelection}
+                onDragOver={handleCanvasDragOver}
+                onDrop={handleCanvasDrop}
             >
                 <span className="canvas-stage-label">
                     1920 × 1080

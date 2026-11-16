@@ -23,7 +23,9 @@ interface EditorState {
         y: number
     ) => void;
 
-    addWidget: (widgetType: WidgetType) => void;
+    addWidget: (widgetType: WidgetType,
+                position?: { x: number, y: number }
+    ) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -101,9 +103,13 @@ export const useEditorStore = create<EditorState>((set) => ({
                 })),
             },
         })),
-    addWidget: (widgetType) => {
+    addWidget: (widgetType, position?: { x: number; y: number }) => {
         const newWidget = createWidget(widgetType);
         const newInstance = createWidgetInstance(newWidget.id, newWidget.type);
+
+        if(position) {
+            newInstance.position = position;
+        }
 
         set((state) => ({
             project: {
@@ -121,7 +127,7 @@ export const useEditorStore = create<EditorState>((set) => ({
 
                     return {
                         ...scene,
-                        widgetInstances:[
+                        widgetInstances: [
                             ...scene.widgetInstances,
                             newInstance,
                         ],
